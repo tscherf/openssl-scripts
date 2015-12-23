@@ -13,6 +13,7 @@ done
 chmod 700 private
 touch index.txt
 echo 1000 > serial
+echo 1000 > crlnumber
 
 # Create the root key and certificate
 
