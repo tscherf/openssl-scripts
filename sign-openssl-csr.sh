@@ -18,4 +18,4 @@ openssl ca -config $OPENSSL_CONF \
       -in $CA_DIR/csr/${fqdn}.csr.pem \
       -out $CA_DIR/newcerts/${fqdn}.cert.pem
 
-chmod 444 certs/${fqdn}.cert.pem
+chmod 444 $CA_DIR/newcerts/${fqdn}.cert.pem

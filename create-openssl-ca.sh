@@ -4,7 +4,7 @@ CA_DIR=/etc/pki/CA/
 OPENSSL_CONF=/etc/pki/tls/openssl.cnf
 
 for name in certs private crl newcerts newcerts/private csr; do
-    [[ ! $CA_DIR/$name ]] || mkdir $name
+    [[ ! $CA_DIR/$name ]] || mkdir $CA_DIR/$name
 done
 
 chmod 700 $CA_DIR/newcerts/private
@@ -16,7 +16,7 @@ echo 1000 > $CA_DIR/crlnumber
 # Create the key
 openssl genrsa -aes256 -out $CA_DIR/private/ca.key.pem 4096
 
-chmod 400 private/ca.key.pem
+chmod 400 $CA_DIR/private/ca.key.pem
 
 # Create the certificate
 openssl req -config $OPENSSL_CONF \
