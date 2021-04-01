@@ -1,21 +1,21 @@
 #!/bin/sh
 
-# OpenSSL CA cert dir
-TLS_DIR=/etc/pki/tls/
+CA_DIR=/etc/pki/CA/
+OPENSSL_CONF=/etc/pki/tls/openssl.cnf
 
-# Use first passed argument as hostname
+# Use first argument as hostname
 fqdn=$1
 
-if [ $# -ne 1 ]; then 
+if [ $# -ne 1 ]; then
     echo "No hostname has been passed to the script."
-    echo "Exiting."
+    echo "Usage: $0 hostname"
     exit 1
 fi
 
-cd $TLS_DIR
-openssl ca -config /etc/pki/tls/openssl.cnf \
+# sign the certificate request
+openssl ca -config $OPENSSL_CONF \
       -extensions server_cert -days 1825 -notext -md sha256 \
-      -in csr/${fqdn}.csr.pem \
-      -out certs/${fqdn}.cert.pem
+      -in $CA_DIR/csr/${fqdn}.csr.pem \
+      -out $CA_DIR/newcerts/${fqdn}.cert.pem
 
 chmod 444 certs/${fqdn}.cert.pem

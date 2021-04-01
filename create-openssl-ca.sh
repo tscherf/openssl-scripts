@@ -1,13 +1,10 @@
 #/bin/sh
 
-# OpenSSL CA cert dir
 CA_DIR=/etc/pki/CA/
+OPENSSL_CONF=/etc/pki/tls/openssl.cnf
 
-# Setup the dir structure
-cd $CA_DIR
-
-for name in certs crl newcerts private csr; do
-    [[ ! $name ]] || mkdir $name 
+for name in certs private crl newcerts newcerts/private csr; do
+    [[ ! $name ]] || mkdir $name
 done
 
 chmod 700 private
@@ -15,18 +12,17 @@ touch index.txt
 echo 1000 > serial
 echo 1000 > crlnumber
 
-# Create the root key and certificate
 
-# Key
+# Create the key
 openssl genrsa -aes256 -out private/ca.key.pem 4096
 
 chmod 400 private/ca.key.pem
 
-# Certificate
-openssl req -config /etc/pki/tls/openssl.cnf \
-    -key private/ca.key.pem \
+# Create the certificate
+openssl req -config $OPENSSL_CONF \
+    -key $CA_DIR/private/ca.key.pem \
     -new -x509 -days 7300 -sha256 -extensions v3_ca \
-    -out certs/ca.cert.pem
+    -out $CA_DIR/certs/ca.cert.pem
 
 chmod 444 certs/ca.cert.pem
 

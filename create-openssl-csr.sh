@@ -1,32 +1,27 @@
 #!/bin/sh
 
-# OpenSSL TLS cert dir
-TLS_DIR=/etc/pki/tls/
+CA_DIR=/etc/pki/CA/
+OPENSSL_CONF=/etc/pki/tls/openssl.cnf
 
 # Use first passed argument as hostname
 fqdn=$1
 
-if [ $# -ne 1 ]; then 
+if [ $# -ne 1 ]; then
     echo "No hostname has been passed to the script."
-    echo "Exiting."
+    echo "Usage: $0 hostname"
     exit 1
 fi
 
-# Setup the dir structure
-cd $TLS_DIR
-
-# Key
+# Create the key
 openssl genrsa -aes256 \
-    -out private/${fqdn}.key.pem 2048
+    -out $CA_DIR/newcerts/private/${fqdn}.key.pem 2048
 
-chmod 400 private/${fqdn}.key.pem
+chmod 400 $CA_DIR/newcerts/private/${fqdn}.key.pem
 
-# CSR
-[[ -d $TLS_DIR/csr/ ]] || mkdir $TLS_DIR/csr/
-
-openssl req -config $TLS_DIR/openssl.cnf \
-    -key private/${fqdn}.key.pem \
-    -new -sha256 -out csr/${fqdn}.csr.pem
+# Create the signing request
+openssl req -config $OPENSSL_CONF \
+    -key $CA_DIR/newcerts/private/${fqdn}.key.pem \
+    -new -sha256 -out $CA_DIR/csr/${fqdn}.csr.pem
 
 
 
